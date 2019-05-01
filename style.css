@@ -11,6 +11,41 @@ canvas {
 div#options {
     margin: 10px;
     padding: 10px;
-    background-color: rgba(0,0,200,.3);
     position: fixed;
+}
+
+button {
+    border: 0;
+    padding: 2px 10px 2px;
+    background-color: rgba(100,50,255,.5);
+    color: white;
+}
+
+input[type='range'] {
+    overflow: hidden;
+}
+
+#red, #green, #blue, #alpha {
+    background-color: transparent;
+}
+
+#red::-webkit-slider-thumb {
+    background: red;
+}
+
+#red::-moz-range-progress
+{
+    background-color: red;
+}
+#blue::-moz-range-progress
+{
+    background-color: blue;
+}
+#green::-moz-range-progress
+{
+    background-color: green;
+}
+#alpha::-moz-range-progress
+{
+    background-color: white;
 }

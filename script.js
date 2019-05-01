@@ -6,6 +6,7 @@ var positionJumpDistance = 0.5
 //var updateSpeed = 1 // this with setTimeout or requestFrameAnimation can be used
 var mouse = { x: null, y: null }
 var color = {r: 100, g: 25, b: 255, a: 0.1}
+var showNumbers = false
 
 function start() {
     // Creates canvas and appends to body
@@ -16,7 +17,7 @@ function start() {
     // Canvas context
     ctx = canvas.getContext('2d')
     ctx.strokeStyle = 'aqua'
-    ctx.font = '12px white' // DEBUG: show point index
+    ctx.font = '12px white'
 
     // Other variables
     minDistance = Math.round(Math.max(canvas.width, canvas.height)/15)
@@ -70,15 +71,20 @@ function drawLines() {
                 Math.abs(points[i].y - mouse.y) < minDistance*1.5) {
                 ctx.lineTo(mouse.x, mouse.y) // line and move to mouse position
                 //ctx.moveTo(points[i].x, points[i].y) // Goes back to current point (i) position
-                ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
+                ctx.fillStyle = 'rgba(255,0,255,.5)'//`rgba(${color.r},${color.g},${color.b},${color.a})`
                 ctx.fill()
             }
         }
-
-        // DEBUG: show point index
-        //ctx.fillStyle = 'aqua' 
-        //ctx.fillText(i, points[i].x, points[i].y - 5, 100)
     }
+
+
+
+    // Shows point
+    if (showNumbers)
+        points.forEach((point, index) => {
+            ctx.fillStyle = 'aqua' 
+            ctx.fillText(index, point.x, point.y - 5, 100)
+        })
 }
 
 function updatePositions() {
@@ -100,6 +106,19 @@ canvas.addEventListener('mousemove', event => {
 canvas.addEventListener('click', event => {
 
 })
+
+function toggleOptions() {
+    let elements = document.querySelectorAll('div#options :not(#toggleButton)')
+    if (elements[0].style.display !== 'none') {
+        elements.forEach(element => element.style.display = 'none')
+        document.getElementById('toggleButton').innerHTML = 'Show'
+    }
+    else {
+        elements.forEach(element => element.style.display = 'inline')
+        document.getElementById('toggleButton').innerHTML = 'Hide'
+    }
+
+}
 
 start()
 
