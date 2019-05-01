@@ -1,20 +1,28 @@
-var canvas
+var canvas = document.createElement('canvas')
 var ctx
 var points = []
-var minDistance = 1000
-var positionJumpDistance = 0.1
-var updateSpeed = 1
+var minDistance
+var positionJumpDistance = 0.5
+//var updateSpeed = 1 // this with setTimeout or requestFrameAnimation can be used
+var mouse = { x: null, y: null }
+var color = {r: 100, g: 25, b: 255, a: 0.1}
 
 function start() {
-    canvas = document.createElement('canvas')
+    // Creates canvas and appends to body
     canvas.width = document.body.clientWidth - 10
     canvas.height = document.body.clientHeight - 10
     document.body.appendChild(canvas)
+
+    // Canvas context
     ctx = canvas.getContext('2d')
     ctx.strokeStyle = 'aqua'
-    ctx.font = '20px white'
-    for (let i = 0; i < 50; i++)
+    ctx.font = '12px white' // DEBUG: show point index
+
+    // Other variables
+    minDistance = Math.round(Math.max(canvas.width, canvas.height)/15)
+    for (let i = 0; i < 100; i++)
         points.push(new createPoint())
+    
     update()
 }
 
@@ -22,21 +30,22 @@ function update() {
     clearCanvas()
     drawLines()
     updatePositions()
-    //requestAnimationFrame(update)
-    setTimeout(update, updateSpeed);
+    requestAnimationFrame(update)
+    //setTimeout(update, updateSpeed);
 }
 
 function createPoint() {
     this.x = Math.random() * canvas.width
     this.y = Math.random() * canvas.height
+    // Chooses which will be randomized (speedX or speedY) and calculates the other
     if (Math.random() < 0.5) {
         let speedX = Math.random()
         this.speedX = speedX
-        this.speedY = Math.sqrt(1 - speedX * speedX) // sin² + cos² = 1 -> sin = sqrt(1 - cos²)
+        this.speedY = Math.sqrt(1 - speedX * speedX) * (Math.random() < 0.5 ? 1 : -1) // sin² + cos² = 1 -> sin = sqrt(1 - cos²)
     } else {
         let speedY = Math.random()
-        this.speedY = speedY
-        this.speedX = Math.sqrt(1 - speedY * speedY) // sin² + cos² = 1 -> cos = sqrt(1 - sin²)
+        this.speedY = speedY * (Math.random() < 0.5 ? 1 : -1)
+        this.speedX = Math.sqrt(1 - speedY * speedY) * (Math.random() < 0.5 ? 1 : -1) // sin² + cos² = 1 -> cos = sqrt(1 - sin²)
     }
 }
 
@@ -46,17 +55,30 @@ function clearCanvas() {
 }
 
 function drawLines() {
-    ctx.fillStyle = 'white' // DEBUG: show point index
-    ctx.beginPath()
     for (let i = 0; i < points.length; i++) {
+        ctx.beginPath()
         ctx.moveTo(points[i].x, points[i].y)
-        for (let j = 0; j < points.length; j++)
-            if (Math.abs(points[i].x - points[j].x) < minDistance ||
-                Math.abs(points[i].y - points[j].y) < minDistance)
-                ctx.lineTo(points[j].x, points[j].y)
-        ctx.fillText(i, points[i].x, points[i].y - 5, 100) // DEBUG: show point index
+        for (let j = 0; j < points.length; j++) {
+            if (Math.abs(points[i].x - points[j].x) < minDistance &&
+                Math.abs(points[i].y - points[j].y) < minDistance) {
+                ctx.lineTo(points[j].x, points[j].y) // line and move to nearby point
+                //ctx.moveTo(points[i].x, points[i].y) // Goes back to current point (i) position
+                ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
+                ctx.fill()
+            }
+            if (Math.abs(points[i].x - mouse.x) < minDistance*1.5 &&
+                Math.abs(points[i].y - mouse.y) < minDistance*1.5) {
+                ctx.lineTo(mouse.x, mouse.y) // line and move to mouse position
+                //ctx.moveTo(points[i].x, points[i].y) // Goes back to current point (i) position
+                ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
+                ctx.fill()
+            }
+        }
+
+        // DEBUG: show point index
+        //ctx.fillStyle = 'aqua' 
+        //ctx.fillText(i, points[i].x, points[i].y - 5, 100)
     }
-    ctx.stroke()
 }
 
 function updatePositions() {
@@ -70,4 +92,18 @@ function updatePositions() {
     }
 }
 
+canvas.addEventListener('mousemove', event => {
+    mouse.x = event.clientX
+    mouse.y = event.clientY
+})
+
+canvas.addEventListener('click', event => {
+
+})
+
 start()
+
+/*  TODO:
+- Change colors based on line length (distance)
+- Add a cool click animation
+*/

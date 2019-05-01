@@ -1,0 +1,16 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+}
+
+canvas {
+    background-color: black;
+}
+
+div#options {
+    margin: 10px;
+    padding: 10px;
+    background-color: rgba(0,0,200,.3);
+    position: fixed;
+}
