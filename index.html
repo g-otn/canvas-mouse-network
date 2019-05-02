@@ -13,9 +13,17 @@
     <div id="options">
         <button id="toggleButton" onclick="toggleOptions()">Hide</button>
         <button onclick="showNumbers ? showNumbers = false : showNumbers = true">Show Index</button>
+        <br><br>
+        <label>Number of points</label>
+        <input name="numberOfPoints" type="number" min="3" max="300" value="100" 
+            onchange="  points = []; 
+                        for (let i = 0; i < this.value; i++) 
+                            points.push(new createPoint())"
+        >
         <br>
-        <br><input type="range" min="1" max="100" oninput="positionJumpDistance = this.value/10">
-        <br><input type="range" min="50" max="250" value="100" oninput="minDistance = this.value">
+        <input type="range" min="0" max="100" oninput="positionJumpDistance = this.value/10">
+        <br>
+        <input type="range" min="50" max="250" value="100" oninput="minDistance = this.value">
         <br>
         <br><input id="red" type="range" min="0" max="255" value="100" oninput="color.r = this.value">
         <br><input id="green" type="range" min="0" max="255" value="50" oninput="color.g = this.value">

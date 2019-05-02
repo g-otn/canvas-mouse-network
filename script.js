@@ -5,13 +5,13 @@ var minDistance
 var positionJumpDistance = 0.5
 //var updateSpeed = 1 // this with setTimeout or requestFrameAnimation can be used
 var mouse = { x: null, y: null }
-var color = {r: 100, g: 25, b: 255, a: 0.1}
+var color = { r: 100, g: 25, b: 255, a: 0.1 }
 var showNumbers = false
 
 function start() {
     // Creates canvas and appends to body
-    canvas.width = document.body.clientWidth - 10
-    canvas.height = document.body.clientHeight - 10
+    canvas.width = document.body.clientWidth
+    canvas.height = document.body.clientHeight
     document.body.appendChild(canvas)
 
     // Canvas context
@@ -20,10 +20,10 @@ function start() {
     ctx.font = '12px white'
 
     // Other variables
-    minDistance = Math.round(Math.max(canvas.width, canvas.height)/15)
+    minDistance = Math.round(Math.max(canvas.width, canvas.height) / 15)
     for (let i = 0; i < 100; i++)
         points.push(new createPoint())
-    
+
     update()
 }
 
@@ -60,18 +60,15 @@ function drawLines() {
         ctx.beginPath()
         ctx.moveTo(points[i].x, points[i].y)
         for (let j = 0; j < points.length; j++) {
+            if (Math.abs(points[i].x - mouse.x) < minDistance * 1.5 &&
+                Math.abs(points[i].y - mouse.y) < minDistance * 1.5) {
+                ctx.lineTo(mouse.x, mouse.y) // line and move to mouse position
+            }
             if (Math.abs(points[i].x - points[j].x) < minDistance &&
                 Math.abs(points[i].y - points[j].y) < minDistance) {
                 ctx.lineTo(points[j].x, points[j].y) // line and move to nearby point
                 //ctx.moveTo(points[i].x, points[i].y) // Goes back to current point (i) position
                 ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
-                ctx.fill()
-            }
-            if (Math.abs(points[i].x - mouse.x) < minDistance*1.5 &&
-                Math.abs(points[i].y - mouse.y) < minDistance*1.5) {
-                ctx.lineTo(mouse.x, mouse.y) // line and move to mouse position
-                //ctx.moveTo(points[i].x, points[i].y) // Goes back to current point (i) position
-                ctx.fillStyle = 'rgba(255,0,255,.5)'//`rgba(${color.r},${color.g},${color.b},${color.a})`
                 ctx.fill()
             }
         }
@@ -82,7 +79,7 @@ function drawLines() {
     // Shows point
     if (showNumbers)
         points.forEach((point, index) => {
-            ctx.fillStyle = 'aqua' 
+            ctx.fillStyle = `rgb(${150 / (points.length + 1) * index},255,${255 / (points.length + 1) * index})`
             ctx.fillText(index, point.x, point.y - 5, 100)
         })
 }
@@ -104,18 +101,31 @@ canvas.addEventListener('mousemove', event => {
 })
 
 canvas.addEventListener('click', event => {
-
+    for (let i = 0; i < points.length; i++) {
+        if (Math.abs(points[i].x - mouse.x) < minDistance * 1.5 &&
+            Math.abs(points[i].y - mouse.y) < minDistance * 1.5) {
+            let arctan = Math.atan2(points[i].y - event.clientY, points[i].x - event.clientX)
+            if (Math.random() < 0.5) {
+                points[i].speedX = Math.cos(arctan) * 5
+            } else {
+                points[i].speedY = Math.sin(arctan) * 5
+            }
+        }
+    }
 })
 
 function toggleOptions() {
     let elements = document.querySelectorAll('div#options :not(#toggleButton)')
+    let toggleButton = document.getElementById('toggleButton')
     if (elements[0].style.display !== 'none') {
         elements.forEach(element => element.style.display = 'none')
-        document.getElementById('toggleButton').innerHTML = 'Show'
+        toggleButton.innerHTML = 'Show'
+        toggleButton.style.backgroundColor = 'transparent'
     }
     else {
         elements.forEach(element => element.style.display = 'inline')
-        document.getElementById('toggleButton').innerHTML = 'Hide'
+        toggleButton.innerHTML = 'Hide'
+        toggleButton.style.backgroundColor = 'rgba(100,50,255,.5)'
     }
 
 }
@@ -124,5 +134,4 @@ start()
 
 /*  TODO:
 - Change colors based on line length (distance)
-- Add a cool click animation
 */
