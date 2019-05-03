@@ -119,12 +119,12 @@ function toggleOptions() {
     let toggleButton = document.getElementById('toggleButton')
     if (elements[0].style.display !== 'none') {
         elements.forEach(element => element.style.display = 'none')
-        toggleButton.innerHTML = 'Show'
+        toggleButton.innerHTML = 'Show Options'
         toggleButton.style.backgroundColor = 'transparent'
     }
     else {
         elements.forEach(element => element.style.display = 'inline')
-        toggleButton.innerHTML = 'Hide'
+        toggleButton.innerHTML = 'Hide Options'
         toggleButton.style.backgroundColor = 'rgba(100,50,255,.5)'
     }
 
